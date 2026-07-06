@@ -15,9 +15,10 @@ import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 import org.patryk3211.powergrid.collections.ModdedBlocks;
-import xyz.amycute.powerchip.PowerChips;
 import xyz.amycute.powerchip.registry.ModItems;
+import xyz.amycute.powerchip.registry.ModNbt;
 import xyz.amycute.powerchip.registry.ModRecipes;
 
 public class ChipCasingRecipe implements CraftingRecipe
@@ -25,7 +26,7 @@ public class ChipCasingRecipe implements CraftingRecipe
     public static final int FIXED_GOLD_COST = 6;
 
     @Override
-    public boolean matches(CraftingInput input, Level level)
+    public boolean matches(CraftingInput input, @NotNull Level level)
     {
         boolean hasBoard = false, hasCasing = false;
         int nuggets = 0;
@@ -38,7 +39,7 @@ public class ChipCasingRecipe implements CraftingRecipe
             if (stack.is(ModdedBlocks.CIRCUIT_BOARD.get().asItem()) && stack.has(DataComponents.CUSTOM_DATA))
             {
                 var tag = stack.get(DataComponents.CUSTOM_DATA).copyTag();
-                if (tag.contains(PowerChips.NBT_SCHEMATIC)) hasBoard = true;
+                if (tag.contains(ModNbt.NBT_SCHEMATIC)) hasBoard = true;
             }
             else if (stack.is(ModItems.CHIP_CASING.get())) hasCasing = true;
             else if (stack.is(Items.GOLD_NUGGET)) nuggets += stack.getCount();
@@ -48,7 +49,7 @@ public class ChipCasingRecipe implements CraftingRecipe
     }
 
     @Override
-    public ItemStack assemble(CraftingInput input, HolderLookup.Provider registries)
+    public @NotNull ItemStack assemble(CraftingInput input, HolderLookup.@NotNull Provider registries)
     {
         CompoundTag schematicTag = null;
         String chipName = "CHIP";
@@ -59,10 +60,10 @@ public class ChipCasingRecipe implements CraftingRecipe
             if (!stack.isEmpty() && stack.is(ModdedBlocks.CIRCUIT_BOARD.get().asItem()) && stack.has(DataComponents.CUSTOM_DATA))
             {
                 var tag = stack.get(DataComponents.CUSTOM_DATA).copyTag();
-                if (tag.contains(PowerChips.NBT_SCHEMATIC))
+                if (tag.contains(ModNbt.NBT_SCHEMATIC))
                 {
-                    schematicTag = tag.getCompound(PowerChips.NBT_SCHEMATIC).copy();
-                    if (schematicTag.contains(PowerChips.NBT_NAME)) chipName = schematicTag.getString(PowerChips.NBT_NAME);
+                    schematicTag = tag.getCompound(ModNbt.NBT_SCHEMATIC).copy();
+                    if (schematicTag.contains(ModNbt.NBT_NAME)) chipName = schematicTag.getString(ModNbt.NBT_NAME);
                     break;
                 }
             }
@@ -73,7 +74,7 @@ public class ChipCasingRecipe implements CraftingRecipe
         var result = new ItemStack(ModItems.CHIP.get());
         var outTag = new CompoundTag();
 
-        outTag.put(PowerChips.NBT_SCHEMATIC, schematicTag);
+        outTag.put(ModNbt.NBT_SCHEMATIC, schematicTag);
         result.set(DataComponents.CUSTOM_DATA, CustomData.of(outTag));
         result.set(DataComponents.CUSTOM_NAME, Component.literal(chipName));
         return result;
@@ -86,25 +87,25 @@ public class ChipCasingRecipe implements CraftingRecipe
     }
 
     @Override
-    public ItemStack getResultItem(HolderLookup.Provider registries)
+    public @NotNull ItemStack getResultItem(HolderLookup.@NotNull Provider registries)
     {
         return new ItemStack(ModItems.CHIP.get());
     }
 
     @Override
-    public RecipeSerializer<?> getSerializer()
+    public @NotNull RecipeSerializer<?> getSerializer()
     {
         return ModRecipes.CHIP_CASING_SERIALIZER.get();
     }
 
     @Override
-    public RecipeType<?> getType()
+    public @NotNull RecipeType<?> getType()
     {
         return RecipeType.CRAFTING;
     }
 
     @Override
-    public CraftingBookCategory category()
+    public @NotNull CraftingBookCategory category()
     {
         return CraftingBookCategory.MISC;
     }
@@ -116,13 +117,13 @@ public class ChipCasingRecipe implements CraftingRecipe
         private static final StreamCodec<net.minecraft.network.RegistryFriendlyByteBuf, ChipCasingRecipe> STREAM_CODEC = StreamCodec.unit(INSTANCE);
 
         @Override
-        public MapCodec<ChipCasingRecipe> codec()
+        public @NotNull MapCodec<ChipCasingRecipe> codec()
         {
             return CODEC;
         }
 
         @Override
-        public StreamCodec<net.minecraft.network.RegistryFriendlyByteBuf, ChipCasingRecipe> streamCodec()
+        public @NotNull StreamCodec<net.minecraft.network.RegistryFriendlyByteBuf, ChipCasingRecipe> streamCodec()
         {
             return STREAM_CODEC;
         }
