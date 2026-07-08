@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 public abstract class CircuitDesignTableEditScreenMixin
 {
     @ModifyVariable(method = "toolSelect(Lnet/minecraft/world/inventory/Slot;)V", at = @At(value = "STORE"), ordinal = 0)
-    private PlacedComponent powerchips$transferChipSchematic(PlacedComponent placed, Slot slot)
+    private PlacedComponent powerchip$transferChipSchematic(PlacedComponent placed, Slot slot)
     {
         if (!(placed.component instanceof ChipComponent)) return placed;
 

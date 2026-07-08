@@ -18,7 +18,7 @@ import xyz.amycute.powerchip.component.ChipComponent;
 public abstract class CircuitSchematicRenderMixin
 {
     @Inject(method = "renderComponents(Lorg/patryk3211/powergrid/circuits/schematic/CircuitSchematic;Lnet/minecraft/client/gui/GuiGraphics;IIIII)V", at = @At("TAIL"))
-    private static void powerchips$drawChipNames(CircuitSchematic schematic, GuiGraphics ctx, int x, int y, int scale, int mouseX, int mouseY, CallbackInfo ci)
+    private static void powerchip$drawChipNames(CircuitSchematic schematic, GuiGraphics ctx, int x, int y, int scale, int mouseX, int mouseY, CallbackInfo ci)
     {
         Font font = Minecraft.getInstance().font;
         PoseStack ms = ctx.pose();
