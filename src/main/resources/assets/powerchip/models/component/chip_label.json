@@ -1,0 +1,18 @@
+{
+  "format_version": "1.9.0",
+  "credit": "PowerChip",
+  "textures": {
+    "0": "powerchip:block/component/chip_label",
+    "particle": "powerchip:block/component/chip_label"
+  },
+  "elements": [
+    {
+      "name": "chip_label",
+      "from": [0, 0, 0],
+      "to": [4, 0.02, 2],
+      "faces": {
+        "up": {"uv": [0, 0, 16, 16], "texture": "#0"}
+      }
+    }
+  ]
+}

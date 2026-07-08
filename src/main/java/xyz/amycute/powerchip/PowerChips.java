@@ -9,7 +9,6 @@ import xyz.amycute.powerchip.registry.ModRecipes;
 public class PowerChips
 {
     public static final String MOD_ID = "powerchip";
-    public static final int MAX_IO = 8;
 
     public PowerChips(IEventBus modBus)
     {

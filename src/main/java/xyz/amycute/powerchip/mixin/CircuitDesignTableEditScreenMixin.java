@@ -1,7 +1,9 @@
 package xyz.amycute.powerchip.mixin;
 
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import xyz.amycute.powerchip.component.ChipComponent;
 import org.patryk3211.powergrid.circuits.editor.CircuitDesignTableEditScreen;
 import org.patryk3211.powergrid.circuits.schematic.PlacedComponent;
@@ -17,13 +19,14 @@ public abstract class CircuitDesignTableEditScreenMixin
     {
         if (!(placed.component instanceof ChipComponent)) return placed;
 
-        var stack = slot.getItem();
+        ItemStack stack = slot.getItem();
         if (!stack.has(DataComponents.CUSTOM_DATA)) return placed;
 
-        var tag = stack.get(DataComponents.CUSTOM_DATA).copyTag();
+        CompoundTag tag = stack.get(DataComponents.CUSTOM_DATA).copyTag();
         if (!tag.contains("Schematic")) return placed;
 
-        placed.set(ChipComponent.SCHEMATIC, tag.getCompound("Schematic"));
+        CompoundTag schematicTag = tag.getCompound("Schematic");
+        placed.set(ChipComponent.SCHEMATIC, schematicTag);
         return placed;
     }
 }

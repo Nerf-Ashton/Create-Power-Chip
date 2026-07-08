@@ -17,7 +17,7 @@ import java.util.List;
 
 public class IOPinComponent extends Component
 {
-    public static final IntProperty PIN = new IntProperty(PowerChips.MOD_ID, "pin", 0, 0, PowerChips.MAX_IO - 1);
+    public static final IntProperty PIN = new IntProperty(PowerChips.MOD_ID, "pin", 0, 0, ChipComponent.MAX_IO - 1);
     public static final StringProperty PIN_LABEL = new StringProperty(PowerChips.MOD_ID, "pin_label");
 
     public IOPinComponent(ComponentFootprint footprint)
@@ -45,10 +45,11 @@ public class IOPinComponent extends Component
     {
         if (placed.customData instanceof List) return (List<TerminalBoundingBox>) placed.customData;
 
-        var label = placed.get(PIN_LABEL);
-        var pin = placed.get(PIN);
+        String label = placed.getString(PIN_LABEL);
+        int pin = placed.get(PIN);
+
         String text = (label == null || label.isEmpty()) ? ("IO " + pin) : label;
-        var list = List.of(new TerminalBoundingBox(net.minecraft.network.chat.Component.literal(text), 1, 1, 1, 2, 2, 2));
+        List<TerminalBoundingBox> list = List.of(new TerminalBoundingBox(net.minecraft.network.chat.Component.literal(text), 1, 1, 1, 2, 2, 2));
         placed.customData = list;
         return list;
     }

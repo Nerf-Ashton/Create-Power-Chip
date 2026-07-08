@@ -1,6 +1,12 @@
 package xyz.amycute.powerchip.component;
 
 import com.google.common.collect.ImmutableCollection;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.nbt.CompoundTag;
+import org.patryk3211.powergrid.circuits.circuitboard.CircuitBoardBlockEntity;
+import org.patryk3211.powergrid.circuits.components.IComponentGoggleInformation;
+import org.patryk3211.powergrid.circuits.components.IRenderedComponent;
 import org.patryk3211.powergrid.circuits.components.properties.ComponentProperty;
 import xyz.amycute.powerchip.PowerChips;
 import xyz.amycute.powerchip.component.properties.SchematicProperty;
@@ -16,6 +22,7 @@ import org.patryk3211.powergrid.electricity.sim.node.FloatingNode;
 import org.patryk3211.powergrid.electricity.sim.node.INode;
 import org.patryk3211.powergrid.electricity.base.TerminalBoundingBox;
 import org.jetbrains.annotations.NotNull;
+import xyz.amycute.powerchip.component.renderings.ChipLabelRenderer;
 
 import java.util.AbstractCollection;
 import java.util.ArrayList;
@@ -26,8 +33,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
 
-public class ChipComponent extends Component
+public class ChipComponent extends Component implements IRenderedComponent, IComponentGoggleInformation
 {
+    public static final int MAX_IO = 8;
     public static final SchematicProperty SCHEMATIC = new SchematicProperty(PowerChips.MOD_ID, "chip_schematic");
 
     public ChipComponent(ComponentFootprint footprint)
@@ -51,22 +59,22 @@ public class ChipComponent extends Component
     @Override
     public List<TerminalBoundingBox> terminals(@NotNull PlacedComponent placed)
     {
-        var ordered = new TerminalBoundingBox[PowerChips.MAX_IO];
+        TerminalBoundingBox[] ordered = new TerminalBoundingBox[MAX_IO];
 
         for (var entry : footprint(placed).getPads().entrySet())
         {
             var point = entry.getKey();
             var pad = entry.getValue();
-            if (pad.nodeIndex() < 0 || pad.nodeIndex() >= PowerChips.MAX_IO) continue;
+            if (pad.nodeIndex() < 0 || pad.nodeIndex() >= MAX_IO) continue;
 
             var name = pad.tooltip() != null ? pad.tooltip() : net.minecraft.network.chat.Component.literal("IO " + (pad.nodeIndex() + 1));
             ordered[pad.nodeIndex()] = new TerminalBoundingBox(name, point.x(), 0, point.y(), point.x() + 1, 1, point.y() + 1);
         }
-        var list = new ArrayList<TerminalBoundingBox>(PowerChips.MAX_IO);
+        ArrayList<TerminalBoundingBox> list = new ArrayList<TerminalBoundingBox>(MAX_IO);
 
-        for (var bb : ordered)
+        for (TerminalBoundingBox bb : ordered)
         {
-            if (bb == null) throw new IllegalStateException("ChipComponent footprint is missing a pad for one of its 0.." + (PowerChips.MAX_IO - 1) + " node indices");
+            if (bb == null) throw new IllegalStateException("ChipComponent footprint is missing a pad for one of its 0.." + (MAX_IO - 1) + " node indices");
             list.add(bb);
         }
 
@@ -76,36 +84,60 @@ public class ChipComponent extends Component
     @Override
     public void bake(PlacedComponent placed, ComponentCircuitBuilder builder, ThermalBuilder.IEmitter thermalEmitter)
     {
-        var schematic = getInnerSchematic(placed);
+        CircuitSchematic schematic = getInnerSchematic(placed);
         if (schematic == null) return;
 
         Collection<INode> internalSink = new AbstractCollection<>()
         {
-            @Override public boolean add(INode node) { builder.add(node); return true; }
-            @Override public Iterator<INode> iterator() { throw new UnsupportedOperationException(); }
-            @Override public int size() { return 0; }
+            @Override public boolean add(INode node)
+            {
+                builder.add(node);
+                return true;
+            }
+
+            @Override public Iterator<INode> iterator()
+            {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override public int size()
+            {
+                return 0;
+            }
         };
 
         Collection<AbstractElectricWire> wireSink = new AbstractCollection<>()
         {
-            @Override public boolean add(AbstractElectricWire wire) { builder.add(wire); return true; }
-            @Override public Iterator<AbstractElectricWire> iterator() { throw new UnsupportedOperationException(); }
-            @Override public int size() { return 0; }
+            @Override public boolean add(AbstractElectricWire wire)
+            {
+                builder.add(wire);
+                return true;
+            }
+
+            @Override public Iterator<AbstractElectricWire> iterator()
+            {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override public int size()
+            {
+                return 0;
+            }
         };
 
-        var padNodeProviderMap = new HashMap<PlacedComponent, Function<Integer, FloatingNode>>();
-        var innerExternalBundleIndex = new int[]{0};
+        HashMap<PlacedComponent, Function<Integer, FloatingNode>> padNodeProviderMap = new HashMap<PlacedComponent, Function<Integer, FloatingNode>>();
+        int[] innerExternalBundleIndex = new int[]{0};
 
-        for (var innerPlaced : schematic.components())
+        for (PlacedComponent innerPlaced : schematic.components())
         {
-            var nodeIndexSet = new HashSet<Integer>();
+            HashSet<Integer> nodeIndexSet = new HashSet<Integer>();
             for (var pad : innerPlaced.footprint().getPads().values()) if (pad.nodeIndex() >= 0) nodeIndexSet.add(pad.nodeIndex());
 
             Function<Integer, FloatingNode> provider;
             if (innerPlaced.component instanceof IOPinComponent)
             {
                 int pin = innerPlaced.get(IOPinComponent.PIN);
-                provider = i -> pin < PowerChips.MAX_IO ? builder.terminalNode(pin) : new FloatingNode();
+                provider = i -> pin < MAX_IO ? builder.terminalNode(pin) : new FloatingNode();
             }
             else if (innerPlaced.component.emitExternalTerminals())
             {
@@ -113,7 +145,7 @@ public class ChipComponent extends Component
                 provider = i ->
                 {
                     int pin = baseIndex + i;
-                    return pin < PowerChips.MAX_IO ? builder.terminalNode(pin) : new FloatingNode();
+                    return pin < MAX_IO ? builder.terminalNode(pin) : new FloatingNode();
                 };
                 innerExternalBundleIndex[0] += nodeIndexSet.size();
             }
@@ -133,8 +165,7 @@ public class ChipComponent extends Component
         }
 
         Function<CircuitSchematic.Node, FloatingNode> resolve = node -> padNodeProviderMap.get(node.placed()).apply(node.pad());
-
-        for (var bundle : schematic.findNodeBundles())
+        for (Collection<CircuitSchematic.Node> bundle : schematic.findNodeBundles())
         {
             if (bundle.size() <= 1) continue;
             if (bundle.size() == 2)
@@ -147,8 +178,8 @@ public class ChipComponent extends Component
             }
             else
             {
-                var junction = builder.addInternalNode();
-                for (var node : bundle) builder.add(new ElectricWire(node.getPadResistance(), resolve.apply(node), junction));
+                FloatingNode junction = builder.addInternalNode();
+                for (CircuitSchematic.Node node : bundle) builder.add(new ElectricWire(node.getPadResistance(), resolve.apply(node), junction));
             }
         }
     }
@@ -156,11 +187,47 @@ public class ChipComponent extends Component
     private static CircuitSchematic getInnerSchematic(PlacedComponent placed)
     {
         if (placed.customData instanceof CircuitSchematic cached) return cached;
-        var tag = placed.get(SCHEMATIC);
+        CompoundTag tag = placed.get(SCHEMATIC);
         if (tag == null || tag.isEmpty()) return null;
 
-        var schematic = CircuitSchematic.fromNbt(tag);
+        CircuitSchematic schematic = CircuitSchematic.fromNbt(tag);
         placed.customData = schematic;
         return schematic;
+    }
+
+    public static String getChipName(PlacedComponent placed)
+    {
+        CircuitSchematic schematic = getInnerSchematic(placed);
+        if (schematic == null) return "Chip"; // Should maybe throw lmao
+
+        for (PlacedComponent inner : schematic.components())
+        {
+            if (inner.component instanceof ChipNameComponent)
+            {
+                String name = ChipNameComponent.nameof(inner);
+                if (!name.isEmpty()) return name;
+            }
+        }
+        return "Chip";
+    }
+
+    @Override
+    public boolean addToGoggleTooltip(@NotNull PlacedComponent placed, @NotNull List<net.minecraft.network.chat.Component> tooltip, boolean isPlayerSneaking)
+    {
+        String name = getChipName(placed);
+        if (name.isEmpty()) return false;
+
+        tooltip.add(net.minecraft.network.chat.Component.literal(name));
+        return true;
+    }
+
+    @Override
+    public void render(CircuitBoardBlockEntity be, PlacedComponent placed, float partialTicks, PoseStack ms, MultiBufferSource bufferSource, int light, int overlay)
+    {
+        String name = getChipName(placed);
+        if (name.isEmpty()) return;
+
+        ComponentFootprint footprint = footprint(placed);
+        ChipLabelRenderer.render(ms, bufferSource, name,footprint.getWidth() / 16f / 2f, footprint.getHeight() / 16f / 2f, light, overlay);
     }
 }

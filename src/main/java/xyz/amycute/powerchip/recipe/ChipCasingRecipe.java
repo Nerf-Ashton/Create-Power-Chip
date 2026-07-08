@@ -16,7 +16,9 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
+import org.patryk3211.powergrid.circuits.schematic.CircuitSchematic;
 import org.patryk3211.powergrid.collections.ModdedBlocks;
+import xyz.amycute.powerchip.component.ChipNameComponent;
 import xyz.amycute.powerchip.registry.ModItems;
 import xyz.amycute.powerchip.registry.ModNbt;
 import xyz.amycute.powerchip.registry.ModRecipes;
@@ -33,17 +35,17 @@ public class ChipCasingRecipe implements CraftingRecipe
 
         for (int i = 0; i < input.size(); i++)
         {
-            var stack = input.getItem(i);
+            ItemStack stack = input.getItem(i);
             if (stack.isEmpty()) continue;
 
             if (stack.is(ModdedBlocks.CIRCUIT_BOARD.get().asItem()) && stack.has(DataComponents.CUSTOM_DATA))
             {
-                var tag = stack.get(DataComponents.CUSTOM_DATA).copyTag();
+                CompoundTag tag = stack.get(DataComponents.CUSTOM_DATA).copyTag();
                 if (tag.contains(ModNbt.NBT_SCHEMATIC)) hasBoard = true;
             }
             else if (stack.is(ModItems.CHIP_CASING.get())) hasCasing = true;
             else if (stack.is(Items.GOLD_NUGGET)) nuggets += stack.getCount();
-            else  return false;
+            else return false;
         }
         return hasBoard && hasCasing && nuggets >= FIXED_GOLD_COST;
     }
@@ -56,14 +58,16 @@ public class ChipCasingRecipe implements CraftingRecipe
 
         for (int i = 0; i < input.size(); ++i)
         {
-            var stack = input.getItem(i);
+            ItemStack stack = input.getItem(i);
             if (!stack.isEmpty() && stack.is(ModdedBlocks.CIRCUIT_BOARD.get().asItem()) && stack.has(DataComponents.CUSTOM_DATA))
             {
-                var tag = stack.get(DataComponents.CUSTOM_DATA).copyTag();
+                CompoundTag tag = stack.get(DataComponents.CUSTOM_DATA).copyTag();
                 if (tag.contains(ModNbt.NBT_SCHEMATIC))
                 {
                     schematicTag = tag.getCompound(ModNbt.NBT_SCHEMATIC).copy();
-                    if (schematicTag.contains(ModNbt.NBT_NAME)) chipName = schematicTag.getString(ModNbt.NBT_NAME);
+                    String foundName = findChipName(schematicTag);
+                    if (foundName != null) chipName = foundName;
+
                     break;
                 }
             }
@@ -71,13 +75,29 @@ public class ChipCasingRecipe implements CraftingRecipe
 
         if (schematicTag == null) return ItemStack.EMPTY;
 
-        var result = new ItemStack(ModItems.CHIP.get());
-        var outTag = new CompoundTag();
+        ItemStack result = new ItemStack(ModItems.CHIP.get());
+        CompoundTag outTag = new CompoundTag();
 
         outTag.put(ModNbt.NBT_SCHEMATIC, schematicTag);
         result.set(DataComponents.CUSTOM_DATA, CustomData.of(outTag));
         result.set(DataComponents.CUSTOM_NAME, Component.literal(chipName));
         return result;
+    }
+
+    private static String findChipName(CompoundTag schematicTag)
+    {
+        CircuitSchematic schematic = CircuitSchematic.fromNbt(schematicTag);
+        if (schematic == null) return null;
+
+        for (var placed : schematic.components())
+        {
+            if (placed.component instanceof ChipNameComponent)
+            {
+                String name = ChipNameComponent.nameof(placed);
+                if (!name.isEmpty()) return name;
+            }
+        }
+        return null;
     }
 
     @Override
