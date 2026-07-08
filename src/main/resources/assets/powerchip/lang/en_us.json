@@ -6,28 +6,26 @@
   "powerchip.component.property.chip_color": "Text color",
 
   "component.powerchip.io_pin.0": "IO",
+  "powerchip.component.property.chip_name": "Chip name",
+  "component.component.powerchip.property.pin": "Pin number",
+  "component.component.powerchip.property.pin_label": "Label",
+
+  "component.powerchip.io_pin.0": "IO",
+  "component.powerchip.chip.0": "Pin 0",
+  "component.powerchip.chip.1": "Pin 1",
+  "component.powerchip.chip.2": "Pin 2",
+  "component.powerchip.chip.3": "Pin 3",
+  "component.powerchip.chip.4": "Pin 4",
+  "component.powerchip.chip.5": "Pin 5",
+  "component.powerchip.chip.6": "Pin 6",
+  "component.powerchip.chip.7": "Pin 7",
 
   "component.powerchip.chip.0.short": "0",
-  "component.powerchip.chip.0": "Pin 0",
-
   "component.powerchip.chip.1.short": "1",
-  "component.powerchip.chip.1": "Pin 1",
-
   "component.powerchip.chip.2.short": "2",
-  "component.powerchip.chip.2": "Pin 2",
-
   "component.powerchip.chip.3.short": "3",
-  "component.powerchip.chip.3": "Pin 3",
-
   "component.powerchip.chip.4.short": "4",
-  "component.powerchip.chip.4": "Pin 4",
-
   "component.powerchip.chip.5.short": "5",
-  "component.powerchip.chip.5": "Pin 5",
-
   "component.powerchip.chip.6.short": "6",
-  "component.powerchip.chip.6": "Pin 6",
-
-  "component.powerchip.chip.7.short": "7",
-  "component.powerchip.chip.7": "Pin 7"
+  "component.powerchip.chip.7.short": "7"
 }

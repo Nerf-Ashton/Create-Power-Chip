@@ -5,8 +5,8 @@ import org.jetbrains.annotations.NotNull;
 import org.patryk3211.powergrid.circuits.circuitboard.ComponentCircuitBuilder;
 import org.patryk3211.powergrid.circuits.components.Component;
 import org.patryk3211.powergrid.circuits.components.properties.ComponentProperty;
-import org.patryk3211.powergrid.circuits.components.properties.IntProperty;
 import org.patryk3211.powergrid.circuits.components.properties.StringProperty;
+import xyz.amycute.powerchip.component.properties.PinGridProperty;
 import org.patryk3211.powergrid.circuits.schematic.ComponentFootprint;
 import org.patryk3211.powergrid.circuits.schematic.PlacedComponent;
 import org.patryk3211.powergrid.circuits.thermal.ThermalBuilder;
@@ -17,7 +17,7 @@ import java.util.List;
 
 public class IOPinComponent extends Component
 {
-    public static final IntProperty PIN = new IntProperty(PowerChips.MOD_ID, "pin", 0, 0, ChipComponent.MAX_IO - 1);
+    public static final PinGridProperty PIN = new PinGridProperty(PowerChips.MOD_ID, "pin", 0, 0, ChipComponent.MAX_IO - 1);
     public static final StringProperty PIN_LABEL = new StringProperty(PowerChips.MOD_ID, "pin_label");
 
     public IOPinComponent(ComponentFootprint footprint)
