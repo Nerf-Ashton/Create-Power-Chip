@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
@@ -134,7 +135,7 @@ public class ChipCasingRecipe implements CraftingRecipe
     {
         private static final ChipCasingRecipe INSTANCE = new ChipCasingRecipe();
         private static final MapCodec<ChipCasingRecipe> CODEC = MapCodec.unit(INSTANCE);
-        private static final StreamCodec<net.minecraft.network.RegistryFriendlyByteBuf, ChipCasingRecipe> STREAM_CODEC = StreamCodec.unit(INSTANCE);
+        private static final StreamCodec<RegistryFriendlyByteBuf, ChipCasingRecipe> STREAM_CODEC = StreamCodec.unit(INSTANCE);
 
         @Override
         public @NotNull MapCodec<ChipCasingRecipe> codec()
@@ -143,7 +144,7 @@ public class ChipCasingRecipe implements CraftingRecipe
         }
 
         @Override
-        public @NotNull StreamCodec<net.minecraft.network.RegistryFriendlyByteBuf, ChipCasingRecipe> streamCodec()
+        public @NotNull StreamCodec<RegistryFriendlyByteBuf, ChipCasingRecipe> streamCodec()
         {
             return STREAM_CODEC;
         }
