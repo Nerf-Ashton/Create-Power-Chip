@@ -18,7 +18,7 @@ import xyz.amycute.powerchip.component.ChipComponent;
 public abstract class CircuitSchematicRenderMixin
 {
     @Inject(method = "renderComponents(Lorg/patryk3211/powergrid/circuits/schematic/CircuitSchematic;Lnet/minecraft/client/gui/GuiGraphics;IIIII)V", at = @At("TAIL"))
-    private static void powerchips$drawChipNames(CircuitSchematic schematic, GuiGraphics ctx, int x, int y, int scale, int mouseX, int mouseY, CallbackInfo ci)
+    private static void powerchip$drawChipNames(CircuitSchematic schematic, GuiGraphics ctx, int x, int y, int scale, int mouseX, int mouseY, CallbackInfo ci)
     {
         Font font = Minecraft.getInstance().font;
         PoseStack ms = ctx.pose();
@@ -30,6 +30,7 @@ public abstract class CircuitSchematicRenderMixin
             String name = ChipComponent.getChipName(placed);
             if (name.isEmpty()) continue;
 
+            int color = ChipComponent.getChipColor(placed);
             ComponentFootprint footprint = placed.footprint();
             int cellX = x + placed.x * scale;
             int cellY = y + placed.y * scale;
@@ -40,7 +41,7 @@ public abstract class CircuitSchematicRenderMixin
             ms.translate(cellX + cellWidth / 2f, cellY + cellHeight / 2f, 200);
             float textScale = 0.6f;
             ms.scale(textScale, textScale, 1f);
-            ctx.drawCenteredString(font, name, 0, -font.lineHeight / 2, 0xFFFFFFFF);
+            ctx.drawCenteredString(font, name, 0, -font.lineHeight / 2, color);
             ms.popPose();
         }
     }

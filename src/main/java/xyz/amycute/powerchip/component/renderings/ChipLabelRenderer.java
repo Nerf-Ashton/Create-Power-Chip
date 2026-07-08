@@ -63,7 +63,7 @@ public final class ChipLabelRenderer
         };
     }
 
-    public static void render(PoseStack ms, MultiBufferSource bufferSource, String name, float centerX, float centerZ, int light, int overlay)
+    public static void render(PoseStack ms, MultiBufferSource bufferSource, String name, int color, float centerX, float centerZ, int light, int overlay)
     {
         if (name.isEmpty()) return;
 
@@ -79,7 +79,7 @@ public final class ChipLabelRenderer
         ms.translate(centerX, TEXT_Y_OFFSET, centerZ);
         ms.mulPose(Axis.XP.rotationDegrees(90));
         ms.scale(TEXT_SCALE, TEXT_SCALE, TEXT_SCALE);
-        font.drawInBatch(name, -textWidthPx / 2f, -font.lineHeight / 2f, 0xFFFFFFFF, false, ms.last().pose(), bufferSource, Font.DisplayMode.NORMAL, 0, light);
+        font.drawInBatch(name, -textWidthPx / 2f, -font.lineHeight / 2f, color, false, ms.last().pose(), bufferSource, Font.DisplayMode.NORMAL, 0, light);
         ms.popPose();
     }
 

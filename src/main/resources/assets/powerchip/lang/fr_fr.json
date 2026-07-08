@@ -1,0 +1,30 @@
+{
+  "item.powerchip.chip": "Puce",
+  "item.powerchip.chip_casing": "Boîtier de puce",
+  "powerchip.component.property.chip_schematic": "Schéma",
+
+  "powerchip.component.property.chip_color": "Couleur du texte",
+  "powerchip.component.property.chip_name": "Nom de la puce",
+  "powerchip.component.property.pin": "Numéro de broche",
+  "powerchip.component.property.pin_label": "Étiquette",
+
+  "component.powerchip.io_pin.0": "E/S",
+
+  "component.powerchip.chip.0": "Broche 0",
+  "component.powerchip.chip.1": "Broche 1",
+  "component.powerchip.chip.2": "Broche 2",
+  "component.powerchip.chip.3": "Broche 3",
+  "component.powerchip.chip.4": "Broche 4",
+  "component.powerchip.chip.5": "Broche 5",
+  "component.powerchip.chip.6": "Broche 6",
+  "component.powerchip.chip.7": "Broche 7",
+
+  "component.powerchip.chip.0.short": "0",
+  "component.powerchip.chip.1.short": "1",
+  "component.powerchip.chip.2.short": "2",
+  "component.powerchip.chip.3.short": "3",
+  "component.powerchip.chip.4.short": "4",
+  "component.powerchip.chip.5.short": "5",
+  "component.powerchip.chip.6.short": "6",
+  "component.powerchip.chip.7.short": "7"
+}

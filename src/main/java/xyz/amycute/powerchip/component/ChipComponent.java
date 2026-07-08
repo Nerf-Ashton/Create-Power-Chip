@@ -56,6 +56,22 @@ public class ChipComponent extends Component implements IRenderedComponent, ICom
         return true;
     }
 
+    public static String getPinLabel(PlacedComponent placed, int pin)
+    {
+        CircuitSchematic schematic = getInnerSchematic(placed);
+        if (schematic == null) return null;
+
+        for (PlacedComponent inner : schematic.components())
+        {
+            if (!(inner.component instanceof IOPinComponent)) continue;
+            if (inner.get(IOPinComponent.PIN) != pin) continue;
+
+            String label = inner.getString(IOPinComponent.PIN_LABEL);
+            if (label != null && !label.isEmpty()) return label;
+        }
+        return null;
+    }
+
     @Override
     public List<TerminalBoundingBox> terminals(@NotNull PlacedComponent placed)
     {
@@ -67,7 +83,11 @@ public class ChipComponent extends Component implements IRenderedComponent, ICom
             var pad = entry.getValue();
             if (pad.nodeIndex() < 0 || pad.nodeIndex() >= MAX_IO) continue;
 
-            var name = pad.tooltip() != null ? pad.tooltip() : net.minecraft.network.chat.Component.literal("IO " + (pad.nodeIndex() + 1));
+            String customLabel = getPinLabel(placed, pad.nodeIndex());
+            net.minecraft.network.chat.Component name;
+            if (customLabel != null) name = net.minecraft.network.chat.Component.literal(customLabel);
+            else name = pad.tooltip() != null ? pad.tooltip() : net.minecraft.network.chat.Component.literal("IO " + (pad.nodeIndex() + 1));
+
             ordered[pad.nodeIndex()] = new TerminalBoundingBox(name, point.x(), 0, point.y(), point.x() + 1, 1, point.y() + 1);
         }
         ArrayList<TerminalBoundingBox> list = new ArrayList<>(MAX_IO);
@@ -211,6 +231,22 @@ public class ChipComponent extends Component implements IRenderedComponent, ICom
         return "";
     }
 
+    public static int getChipColor(PlacedComponent placed)
+    {
+        CircuitSchematic schematic = getInnerSchematic(placed);
+        if (schematic == null) return 0xFFFFFFFF;
+
+        for (PlacedComponent inner : schematic.components())
+        {
+            if (inner.component instanceof ChipNameComponent)
+            {
+                String name = ChipNameComponent.nameof(inner);
+                if (!name.isEmpty()) return ChipNameComponent.colorof(inner);
+            }
+        }
+        return 0xFFFFFFFF;
+    }
+
     @Override
     public boolean addToGoggleTooltip(@NotNull PlacedComponent placed, @NotNull List<net.minecraft.network.chat.Component> tooltip, boolean isPlayerSneaking)
     {
@@ -227,7 +263,8 @@ public class ChipComponent extends Component implements IRenderedComponent, ICom
         String name = getChipName(placed);
         if (name.isEmpty()) return;
 
+        int color = getChipColor(placed);
         ComponentFootprint footprint = footprint(placed);
-        ChipLabelRenderer.render(ms, bufferSource, name,footprint.getWidth() / 16f / 2f, footprint.getHeight() / 16f / 2f, light, overlay);
+        ChipLabelRenderer.render(ms, bufferSource, name, color, footprint.getWidth() / 16f / 2f, footprint.getHeight() / 16f / 2f, light, overlay);
     }
 }
