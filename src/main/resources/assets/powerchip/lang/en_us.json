@@ -3,6 +3,9 @@
   "item.powerchip.chip_casing": "Chip Casing",
   "powerchip.component.property.chip_schematic": "Schematic",
 
+  "powerchip.component.property.chip_color": "Text color",
+
+  "component.powerchip.io_pin.0": "IO",
   "powerchip.component.property.chip_name": "Chip name",
   "component.component.powerchip.property.pin": "Pin number",
   "component.component.powerchip.property.pin_label": "Label",

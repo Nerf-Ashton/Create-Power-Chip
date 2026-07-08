@@ -211,6 +211,22 @@ public class ChipComponent extends Component implements IRenderedComponent, ICom
         return "";
     }
 
+    public static int getChipColor(PlacedComponent placed)
+    {
+        CircuitSchematic schematic = getInnerSchematic(placed);
+        if (schematic == null) return 0xFFFFFFFF;
+
+        for (PlacedComponent inner : schematic.components())
+        {
+            if (inner.component instanceof ChipNameComponent)
+            {
+                String name = ChipNameComponent.nameof(inner);
+                if (!name.isEmpty()) return ChipNameComponent.colorof(inner);
+            }
+        }
+        return 0xFFFFFFFF;
+    }
+
     @Override
     public boolean addToGoggleTooltip(@NotNull PlacedComponent placed, @NotNull List<net.minecraft.network.chat.Component> tooltip, boolean isPlayerSneaking)
     {
@@ -227,7 +243,8 @@ public class ChipComponent extends Component implements IRenderedComponent, ICom
         String name = getChipName(placed);
         if (name.isEmpty()) return;
 
+        int color = getChipColor(placed);
         ComponentFootprint footprint = footprint(placed);
-        ChipLabelRenderer.render(ms, bufferSource, name,footprint.getWidth() / 16f / 2f, footprint.getHeight() / 16f / 2f, light, overlay);
+        ChipLabelRenderer.render(ms, bufferSource, name, color, footprint.getWidth() / 16f / 2f, footprint.getHeight() / 16f / 2f, light, overlay);
     }
 }
