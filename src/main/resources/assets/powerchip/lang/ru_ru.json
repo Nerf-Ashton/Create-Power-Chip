@@ -1,0 +1,33 @@
+{
+  "item.powerchip.chip": "Чип",
+  "item.powerchip.chip_casing": "Корпус чипа",
+  "powerchip.component.property.chip_schematic": "Схема",
+  "powerchip.component.property.pin": "Пин",
+  "powerchip.component.property.pin_label": "Метка пина",
+
+  "component.powerchip.io_pin.0": "В/В",
+
+  "component.powerchip.chip.0.short": "0",
+  "component.powerchip.chip.0": "Пин 0",
+
+  "component.powerchip.chip.1.short": "1",
+  "component.powerchip.chip.1": "Пин 1",
+
+  "component.powerchip.chip.2.short": "2",
+  "component.powerchip.chip.2": "Пин 2",
+
+  "component.powerchip.chip.3.short": "3",
+  "component.powerchip.chip.3": "Пин 3",
+
+  "component.powerchip.chip.4.short": "4",
+  "component.powerchip.chip.4": "Пин 4",
+
+  "component.powerchip.chip.5.short": "5",
+  "component.powerchip.chip.5": "Пин 5",
+
+  "component.powerchip.chip.6.short": "6",
+  "component.powerchip.chip.6": "Пин 6",
+
+  "component.powerchip.chip.7.short": "7",
+  "component.powerchip.chip.7": "Пин 7"
+}
