@@ -1,7 +1,7 @@
 {
   "format_version": "1.21.6",
   "credit": "Made while Gaying",
-  "render_type": "minecraft:translucent",
+  "render_type": "minecraft:cutout",
   "textures": {
     "0": "powerchip:block/component/chip"
   },
